@@ -9,12 +9,6 @@ record ⊤ : Type where constructor tt
 data Decision (P : Type) : Type where
   yes  : P → Decision P
   no   : ¬ P → Decision P
-record Σ (A : Type) (B : A → Type) : Type where
-  constructor _,_
-  field
-    fst : A
-    snd : B fst
-  
 
 Decidable : {C : Type} (R : C → C → Type) → Type
 Decidable R = ∀ x y → Decision (R x y)
