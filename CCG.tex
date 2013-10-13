@@ -1,0 +1,415 @@
+\documentclass{amsart}
+
+\usepackage{etex}
+\usepackage[all,cmtip]{xy}
+\usepackage{tikz-cd}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{upgreek}
+\usepackage{varwidth}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{stmaryrd}
+\usepackage{ifpdf}
+\usepackage{bussproofs}
+\usepackage{proof}
+\usepackage{setspace}
+\usepackage{polytable}
+\usepackage{enumitem}
+\usepackage{multicol}
+
+\DeclareMathAlphabet{\mathkw}{OT1}{cmss}{b}{n}
+
+\newenvironment{ptree}
+{\varwidth{.9\textwidth}\centering\leavevmode}
+{\DisplayProof\endvarwidth}
+\newlist{pcases}{enumerate}{1}
+\setlist[pcases]{
+  label=\arabic*:\protect\thiscase.~,
+  ref=\arabic*,
+  align=left,
+  labelsep=0pt,
+  leftmargin=0pt,
+  labelwidth=0pt,
+  parsep=0pt
+}
+\newcommand{\case}[1][]{%
+  \if\relax\detokenize{#1}\relax
+  \def\thiscase{}%
+  \else
+  \def\thiscase{~#1}%
+  \fi
+\item
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\makeatletter
+\newenvironment{proofof}[1][\proofname]{%
+  \par\pushQED{\qed}\normalfont%
+  \topsep6\p@\@plus6\p@\relax
+\trivlist\item[\hskip\labelsep\bfseries#1\@addpunct{.}]%
+  \ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+
+\title{The Rules of Combinatory Categorial Grammar}
+\author{Jonathan Sterling}
+
+\begin{document}
+
+\begin{abstract}
+  A compact formal presentation of the type theory and calculus behind
+  the Combinatory Categorial Grammar. Traditional presentations of the
+  combining rules tend to involve duplication of a single rule over both
+  direction and modality in an effort to make derivations look as much
+  as possible like the surface forms they trace. Here, we take a
+  different approach and aim for a very succinct syntactic presentation
+  which does not visually resemble the surface form in all cases, but
+  which preserves enough information to be \emph{interpreted} into such
+  a surface form.
+\end{abstract}
+
+\maketitle
+
+\def\ty#1{\ensuremath{\mathsf{#1}}}
+\def\con#1{\ensuremath{\mathsf{#1}}}
+\def\ident#1{\ensuremath{\operatorname{\mathsf{#1}}}}
+\def\induction#1{\mathkw{induction}\ #1}
+\def\decide#1{\mathkw{decide}\ #1}
+
+
+
+\section{The Syntax}
+
+The type theory of combinatory categorial grammar contains base types
+which correspond to DPs, VPs, PPs and so forth, as well as function
+types which characterize unsaturated terms (such as determiners, verbs,
+prepositions, etc.). Words of these types may be combined into larger
+phrases by means of several combining rules, of which function
+application ($\cdot$) and composition ($\mathbf{B}$) are the most basic.
+Others, such as Curry's substitution operator ($\mathbf{S}$) may also be
+considered.
+
+Moreover, these combining rules may be applied in either direction so as
+to faithfully represent the linear ordering of terms in the surface
+form. But some terms may not admit certain combinators, or certain
+directions, or some combination of the two constraints: as a result, we
+must decorate function types with both permitted direction as well as a
+notion of \emph{modality}, which constrains the applicability of
+combining rules within the lexicon.
+
+\subsection{Direction and Modality}
+A \emph{direction} is one of the set
+$\ty{Dir}\triangleq\{\con\triangleright,\con\triangleleft\}$ where $\con\triangleright$
+denotes \emph{forward} and $\con\triangleleft$ denotes \emph{backward}.  Directions may
+be reversed:
+\[
+  \arraycolsep=1.4pt
+  \begin{array}{lcl}
+    !\,\theta &\Leftarrow &\induction\theta\\
+    \quad!\,\con\triangleright &\mapsto &\triangleleft\\
+    \quad!\,\con\triangleleft &\mapsto &\triangleright
+  \end{array}
+\]
+A \emph{modality} is one of the set $\ty{Mod}\triangleq\{\con\bullet, \con\diamond,
+\con\times, \con\star\}$, where \con\bullet\ denotes function terms
+which may only be combined using basic function application,
+\con\diamond\ those which may be combined by application and
+composition such that its operands be uniform in direction, and
+\con\times\ those which may be combined by application and composition
+such that its operands may \emph{not} be uniform in direction; this kind
+of composition is called \emph{crossed} composition. Finally, \con\star\
+represents those terms which may be combined using any of the combining
+rules.
+
+\begin{theorem}\label{thm:modality-is-lattice}
+  The tuple $\langle\ty{Mod}, \land, \lor, \star, \bullet \rangle$
+  is a bounded lattice characterized by the following Hasse diagram:
+  \begin{center}
+    \begin{tikzcd}
+      {} & \bullet\arrow[rightarrow]{dr}\arrow[rightarrow]{dl} & \\
+      \diamond\arrow[rightarrow]{dr} & & \times\arrow[rightarrow]{dl} \\
+                                     & \star
+    \end{tikzcd}
+  \end{center}
+  where $\land$ and $\lor$ are binary operations representing the join
+  and the meet respectively of two modalities as follows:
+
+  \noindent\begin{minipage}{0.5\linewidth}
+    \[
+      \arraycolsep=1.4pt
+      \begin{array}{lcl}
+        a \land b &\Leftarrow &\induction a\\
+        \quad \bullet\land b &\mapsto &\bullet\\
+        \quad \diamond\land b &\Leftarrow &\induction b\\
+        \quad\quad \diamond\land\bullet &\mapsto &\bullet\\
+        \quad\quad \diamond\land\diamond &\mapsto &\diamond\\
+        \quad\quad \diamond\land\times &\mapsto &\bullet\\
+        \quad\quad \diamond\land\star &\mapsto &\diamond\\
+        \quad \times\land b &\Leftarrow &\induction b\\
+        \quad\quad \times\land\bullet &\mapsto &\bullet\\
+        \quad\quad \times\land\diamond &\mapsto &\bullet\\
+        \quad\quad \times\land\times &\mapsto &\times\\
+        \quad\quad \times\land\star &\mapsto &\times\\
+        \quad \star\land b &\mapsto &b
+      \end{array}
+    \]
+  \end{minipage}
+  \begin{minipage}{0.5\linewidth}
+    \[
+      \arraycolsep=1.4pt
+      \begin{array}{lcl}
+        a \lor b &\Leftarrow &\induction a\\
+        \quad \bullet\lor b &\mapsto &b\\
+        \quad \diamond\lor b &\Leftarrow &\induction b\\
+        \quad\quad \diamond\lor\bullet &\mapsto &\diamond\\
+        \quad\quad \diamond\lor\diamond &\mapsto &\diamond\\
+        \quad\quad \diamond\lor\times &\mapsto &\star\\
+        \quad\quad \diamond\lor\star &\mapsto &\star\\
+        \quad \times\lor b &\Leftarrow &\induction b\\
+        \quad\quad \times\lor\bullet &\mapsto &\times\\
+        \quad\quad \times\lor\diamond &\mapsto &\star\\
+        \quad\quad \times\lor\times &\mapsto &\times\\
+        \quad\quad \times\lor\star &\mapsto &\star\\
+        \quad \star\lor b &\mapsto &\star
+      \end{array}
+    \]
+  \end{minipage}
+\end{theorem}
+
+\begin{lemma}[Commutativity]\label{lem:modality-commutativity}
+  For modalities $a, b$, we have $a\land b = b\land a$ and $a\lor b
+  = b\lor a$.
+\end{lemma}
+\begin{proof}
+  By induction on $a$ and $b$.
+\end{proof}
+
+\begin{lemma}[Associativity]\label{lem:modality-associativity}
+  For modalities $a, b, c$, we have $a\land (b\land c) = (a\land b)
+  \land c$ and $a\lor (b\lor c) = (a \lor b) \lor c)$.
+\end{lemma}
+\begin{proof}
+  By induction on $a$, $b$ and $c$.
+\end{proof}
+
+\begin{lemma}[Absorption]\label{lem:modality-absorption}
+  For modalities $a, b$, we have $a\land (a\lor b) = a$ and $a\lor
+  (a\land b) = a$.
+\end{lemma}
+\begin{proof}
+  By induction on $a$ and $b$.
+\end{proof}
+
+\begin{lemma}[Idempotence]\label{lem:modality-idempotence}
+  For any modality $a$, we have $a\land a = a$ and $a\lor a = a$.
+\end{lemma}
+\begin{proof}
+  By induction on $a$.
+\end{proof}
+
+\begin{lemma}[Bounding]\label{lem:modality-bounding}
+  For any modality $a$, we have $a\land\star = a$ and $a\lor\bullet = a$.
+\end{lemma}
+\begin{proof}
+  By induction on $a$.
+\end{proof}
+
+\begin{proofof}[Proof of Theorem \ref{thm:modality-is-lattice}]
+  By Lemmas~\ref{lem:modality-commutativity}--\ref{lem:modality-idempotence},
+  modalities form a lattice; moreover, by
+  Lemma~\ref{lem:modality-bounding}, they are a bounded lattice.
+\end{proofof}
+
+\begin{corollary}
+  We have a partial order $\leq$ on modalities as follows:
+  \[
+    \arraycolsep=1.4pt
+    \begin{array}{lcl}
+      a\leq b &\Leftarrow &\decide{a\land b = a}\\
+      \quad \con{yes}\ p &\mapsto &\top\\
+      \quad \con{no}\ p &\mapsto &\bot
+    \end{array}
+  \]
+\end{corollary}
+
+\def\arrty#1|[#2,#3]#4{#1\,|^{#2}_{#3}\,#4}
+\def\rarrty#1|[#2]#3{#1\,/_{#2}\,#3}
+\def\larrty#1|[#2]#3{#1\,\backslash_#2\,#3}
+
+
+\subsection{The Syntactic Types}
+For a set $B$ of base categories, the syntactic types are the closure
+of $B$ under the function arrow, annotated by direction and
+modality:
+\[
+  \begin{ptree}
+    \AxiomC{$b : B$}
+    \UnaryInfC{$b : \ty{SynType}_B$}
+  \end{ptree}
+  \begin{ptree}
+    \AxiomC{$X, Y : \ty{SynType}_B$}
+    \AxiomC{$\theta : \ty{Dir}$}
+    \AxiomC{$\mu : \ty{Mod}$}
+    \TrinaryInfC{$\arrty X|[\theta,\mu]Y : \ty{SynType}_B$}
+  \end{ptree}
+\]
+Modulo direction and modality, the notation $\arrty X|[\theta,\mu]Y$
+corresponds to a function type $Y\to X$ in ordinary type theory.
+Moreover, when direction is known, we abbreviate with the
+following notations:
+\begin{align*}
+  \rarrty X|[\mu]Y &\triangleq \arrty X|[\con\triangleright,\mu]Y\\
+  \larrty X|[\mu]Y &\triangleq \arrty X|[\con\triangleleft,\mu]Y
+\end{align*}
+
+
+\subsection{The Term Language}
+Whereas in previous presentations of the CCG calculus, introduction
+rules for terms have been duplicated by direction, we can present
+them succinctly as follows.
+
+\begin{definition}
+  A \ty{Lexicon} over base types $B$ is a (meta-)type parameterized by the
+  syntactic types over $B$.
+  \[ \ty{Lexicon}_B \triangleq \ty{SynType}_B\to\ty{Type} \]
+\end{definition}
+
+Terms are parameterized by the lexicon they draw from: by this means,
+terms from differing lexicons may not be combined.
+\[
+  \infer{\ty{SynTerm}_L\, X : \ty{Type}}
+  {
+    L : \ty{Lexicon}_B &
+    X : \ty{SynType}_B
+  }
+\]
+
+An entry in a lexicon $L$ is a term in $\ty{SynTerm}_L$.
+\[
+  \infer{x : \ty{SynTerm}_L\,X}
+  {
+    X : \ty{SynType}_B &
+    x : L_B\, X
+  }
+\]
+
+\def\syn#1:#2{#1 \mathbin{{\bf\color{blue}:}} #2}
+
+For the sake of brevity, we will often use a shorthand $x\syn:X$ for the
+judgement $x:\ty{SynTerm}_L\,X$. At this point we are prepared to give
+the combining rules in their full form; given a set of base types $B$, a
+$\ty{Lexicon}_B$~$L$, a direction~$\theta$, and a modality~$\mu$:
+
+\begin{equation}
+  \infer{f \cdot^\theta_\mu x \syn:X}
+  {
+    X, Y : \ty{SynType}_B &
+    p : \con\bullet\leq\mu &
+    f \syn: \arrty X|[\theta,\mu] Y &
+    x \syn: Y
+  }\tag{$\mathbf{App}$}
+\end{equation}
+
+As you can see, we were able to express the two directional variants of
+$\mathbf{App}$ in one rule by abstracting over $\theta$. The composition
+rule is more interesting, as it places further constraints on both the
+directions and the modalities in order to generate in one stroke four
+different rules: forward composition, backward composition, forward crossed
+composition, and backward crossed composition. We can capture these
+constraints with a notion of \ty{Turn}.
+
+\begin{definition}
+  A \ty{Turn} is an operation on directions licensed by
+  constraints on modalities. Therefore, a $\ty{Turn}\,
+  \theta\,\mu\,\nu\,\rho$ licenses a function in direction $\theta$
+  and modality $\mu$ to be composed with a function in direction
+  $\rho$ and modality $\nu$.
+  \[
+    \infer{\ty{Turn}\,\theta\,\mu\,\nu\,\rho : \ty{Type}}
+    {
+      \theta,\rho : \ty{Dir} &
+      \mu, \nu: \ty {Mod}
+    }
+  \]
+  The identity \ty{Turn} $\con\shortparallel$ is restricted to modalities
+  of at least the same power as $\con\diamond$; the crossed \ty{Turn}
+  $\con\curlywedge$ is restricted to modalities of at least the same
+  power as $\con\times$:
+  \[
+    \infer{\con\shortparallel : \ty{Turn}\,\theta\,\mu\,\nu\,\theta}
+    {
+      \theta : \ty{Dir} &
+      p : \con\diamond\leq\mu &
+      q : \con\diamond\leq\nu
+    }
+    \qquad
+    \infer{\con\curlywedge : \ty{Turn}\,\theta\,\mu\,\nu\,(!\,\theta)}
+    {
+      \theta : \ty{Dir} &
+      p : \con\times\leq\mu &
+      q : \con\times\leq\nu
+    }
+  \]
+\end{definition}
+
+With this in hand, the rule for composition may be expressed in one
+shot. Given directions $\theta,\rho$ and modalities $\mu,\nu$:
+
+\begin{equation}
+  \infer{f \mathbin{\bf B}_t^\theta g \syn: \arrty X|[\rho,\mu\land\nu]Z}
+  {
+    X, Y, Z : \ty{SynType}_B &
+    t : \ty{Turn}\,\theta\,\mu\,\nu\,\rho &
+    f \syn: \arrty X|[\theta,\mu] Y &
+    g \syn: \arrty Y|[\rho,\nu] Z
+  }\tag{$\mathbf{Comp}$}
+\end{equation}
+
+
+\newpage
+\appendix
+\section{Logical Kit}
+
+\begin{definition}
+  For a proposition $P$, $\ty{Decision}\ P$ is the type of proofs or
+  disproofs of $P$.
+  \begin{prooftree}
+    \AxiomC{$P : \ty{Prop}$}
+    \UnaryInfC{$\ty{Decision}\ P : \ty{Type}$}
+  \end{prooftree}
+  \[
+    \begin{ptree}
+      \AxiomC{$P : \ty{Prop}$}
+      \AxiomC{$p : P$}
+      \BinaryInfC{$\con{yes}\ p : \ty{Decision}\ P$}
+    \end{ptree}
+    \begin{ptree}
+      \AxiomC{$P : \ty{Prop}$}
+      \AxiomC{$np : P \to \ty\bot$}
+      \BinaryInfC{$\con{no}\ np : \ty{Decision}\ P$}
+    \end{ptree}
+  \]
+\end{definition}
+
+\begin{definition}
+  We consider a relation $R$ on $C$ decidable if for all $x,y$ in
+  $C$, $\ty{Decision}\ x\,R\,y$.
+  \begin{prooftree}
+    \AxiomC{$C : \ty{Type}$}
+    \AxiomC{$R : C\to C\to\ty{Prop}$}
+    \BinaryInfC{$\ty{Decidable}\ R \mapsto \prod_{x:C}\prod_{y:C} \ty{Decision}\ x\,R\,y : \ty{Type}$}
+  \end{prooftree}
+
+\end{definition}
+
+\end{document}
