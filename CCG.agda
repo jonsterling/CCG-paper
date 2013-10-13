@@ -143,7 +143,7 @@ data Turn (θ : Direction) (μ ν : Modality) : Direction → Type where
 data Tm : SynType → Type where
   [_] : ∀ {X} → Lex X → Tm X
   App : ∀ {X Y θ μ} ⦃ _ : ∙ ≤ μ ⦄ (f : Tm (X |[ θ , μ ] Y)) (x : Tm Y) → Tm X
-  B⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : Tm (X |[ θ , μ ] Y)) (g : Tm (Y |[ θ′ , ν ] Z)) → Tm (X |[ θ′ , μ ∧ ν ] Z)
+  B⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : Tm (X |[ θ , μ ] Y)) (g : Tm (Y |[ θ′ , ν ] Z)) → Tm (X |[ θ′ , μ ∨ ν ] Z)
 
 infixr 9 _,_
 data String : Set where

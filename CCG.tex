@@ -294,7 +294,7 @@ terms from differing lexicons may not be combined.
   }
 \]
 
-An entry in a lexicon $L$ is a term in $\ty{SynTerm}_L$.
+An entry in a lexicon $L$ is also a term in $\ty{SynTerm}_L$.
 \[
   \infer{x : \ty{SynTerm}_L\,X}
   {
@@ -307,13 +307,15 @@ An entry in a lexicon $L$ is a term in $\ty{SynTerm}_L$.
 
 For the sake of brevity, we will often use a shorthand $x\syn:X$ for the
 judgement $x:\ty{SynTerm}_L\,X$. At this point we are prepared to give
-the combining rules in their full form; given a set of base types $B$, a
-$\ty{Lexicon}_B$~$L$, a direction~$\theta$, and a modality~$\mu$:
+the combining rules in their full form; given a set of base types $B$
+and a $\ty{Lexicon}_B$~$L$:
 
 \begin{equation}
   \infer{f \cdot^\theta_\mu x \syn:X}
   {
     X, Y : \ty{SynType}_B &
+    \theta : \ty{Dir} &
+    \mu : \ty{Mod} &
     p : \con\bullet\leq\mu &
     f \syn: \arrty X|[\theta,\mu] Y &
     x \syn: Y
@@ -363,12 +365,14 @@ constraints with a notion of \ty{Turn}.
 \end{definition}
 
 With this in hand, the rule for composition may be expressed in one
-shot. Given directions $\theta,\rho$ and modalities $\mu,\nu$:
+shot:
 
 \begin{equation}
-  \infer{f \mathbin{\bf B}_t^\theta g \syn: \arrty X|[\rho,\mu\land\nu]Z}
+  \infer{f \mathbin{\bf B}_t^\theta g \syn: \arrty X|[\rho,\mu\lor\nu]Z}
   {
     X, Y, Z : \ty{SynType}_B &
+    \theta,\rho : \ty{Dir} &
+    \mu,\nu : \ty{Mod} &
     t : \ty{Turn}\,\theta\,\mu\,\nu\,\rho &
     f \syn: \arrty X|[\theta,\mu] Y &
     g \syn: \arrty Y|[\rho,\nu] Z
