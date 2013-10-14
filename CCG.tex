@@ -13,7 +13,6 @@
 \usepackage{url}
 \usepackage{stmaryrd}
 \usepackage{ifpdf}
-\usepackage{bussproofs}
 \usepackage{proof}
 \usepackage{setspace}
 \usepackage{polytable}
@@ -21,28 +20,6 @@
 \usepackage{multicol}
 
 \DeclareMathAlphabet{\mathkw}{OT1}{cmss}{b}{n}
-
-\newenvironment{ptree}
-{\varwidth{.9\textwidth}\centering\leavevmode}
-{\DisplayProof\endvarwidth}
-\newlist{pcases}{enumerate}{1}
-\setlist[pcases]{
-  label=\arabic*:\protect\thiscase.~,
-  ref=\arabic*,
-  align=left,
-  labelsep=0pt,
-  leftmargin=0pt,
-  labelwidth=0pt,
-  parsep=0pt
-}
-\newcommand{\case}[1][]{%
-  \if\relax\detokenize{#1}\relax
-  \def\thiscase{}%
-  \else
-  \def\thiscase{~#1}%
-  \fi
-\item
-}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}[theorem]{Corollary}
@@ -252,16 +229,17 @@ For a set $B$ of base categories, the syntactic types are the closure
 of $B$ under the function arrow, annotated by direction and
 modality:
 \[
-  \begin{ptree}
-    \AxiomC{$b : B$}
-    \UnaryInfC{$b : \ty{SynType}_B$}
-  \end{ptree}
-  \begin{ptree}
-    \AxiomC{$X, Y : \ty{SynType}_B$}
-    \AxiomC{$\theta : \ty{Dir}$}
-    \AxiomC{$\mu : \ty{Mod}$}
-    \TrinaryInfC{$\arrty X|[\theta,\mu]Y : \ty{SynType}_B$}
-  \end{ptree}
+  \infer{b : \ty{SynType}_B}
+  {
+    b : B
+  }
+  \qquad
+  \infer{\arrty X|[\theta,\mu]Y : \ty{SynType}_B}
+  {
+    X, Y : \ty{SynType}_B &
+    \theta : \ty{Dir} &
+    \mu : \ty{Mod}
+  }
 \]
 Modulo direction and modality, the notation $\arrty X|[\theta,\mu]Y$
 corresponds to a function type $Y\to X$ in ordinary type theory.
@@ -387,32 +365,37 @@ shot:
 \begin{definition}
   For a proposition $P$, $\ty{Decision}\ P$ is the type of proofs or
   disproofs of $P$.
-  \begin{prooftree}
-    \AxiomC{$P : \ty{Prop}$}
-    \UnaryInfC{$\ty{Decision}\ P : \ty{Type}$}
-  \end{prooftree}
   \[
-    \begin{ptree}
-      \AxiomC{$P : \ty{Prop}$}
-      \AxiomC{$p : P$}
-      \BinaryInfC{$\con{yes}\ p : \ty{Decision}\ P$}
-    \end{ptree}
-    \begin{ptree}
-      \AxiomC{$P : \ty{Prop}$}
-      \AxiomC{$np : P \to \ty\bot$}
-      \BinaryInfC{$\con{no}\ np : \ty{Decision}\ P$}
-    \end{ptree}
+    \infer{\ty{Decision}\, P : \ty{Type}}
+    {
+      P : \ty{Prop}
+    }
+  \]
+  \[
+    \infer{\con{yes}\ p : \ty{Decision}\, P}
+    {
+      P : \ty{Prop} &
+      p : P
+    }
+    \qquad
+    \infer{\con{no}\ np : \ty{Decision}\, P}
+    {
+      P : \ty{Prop} &
+      np : P\to\ty\bot
+    }
   \]
 \end{definition}
 
 \begin{definition}
   We consider a relation $R$ on $C$ decidable if for all $x,y$ in
   $C$, $\ty{Decision}\ x\,R\,y$.
-  \begin{prooftree}
-    \AxiomC{$C : \ty{Type}$}
-    \AxiomC{$R : C\to C\to\ty{Prop}$}
-    \BinaryInfC{$\ty{Decidable}\ R \mapsto \prod_{x:C}\prod_{y:C} \ty{Decision}\ x\,R\,y : \ty{Type}$}
-  \end{prooftree}
+  \[
+    \infer{\ty{Decidable}\ R \mapsto \prod_{x:C}\prod_{y:C} \ty{Decision}\ x\,R\,y : \ty{Type}}
+    {
+      C : \ty{Type} &
+      R : C\to C\to\ty{Prop}
+    }
+  \]
 
 \end{definition}
 
