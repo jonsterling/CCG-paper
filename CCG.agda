@@ -140,10 +140,10 @@ data Turn (θ : Direction) (μ ν : Modality) : Direction → Type where
   ∥ : ⦃ _ : ◇ ≤ μ ⦄ ⦃ _ : ◇ ≤ ν ⦄ → Turn θ μ ν θ
   ⋏ : ⦃ _ : × ≤ μ ⦄ ⦃ _ : × ≤ ν ⦄ → Turn θ μ ν (! θ)
 
-data Tm : SynType → Type where
-  [_] : ∀ {X} → Lex X → Tm X
-  App : ∀ {X Y θ μ} ⦃ _ : ∙ ≤ μ ⦄ (f : Tm (X |[ θ , μ ] Y)) (x : Tm Y) → Tm X
-  B⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : Tm (X |[ θ , μ ] Y)) (g : Tm (Y |[ θ′ , ν ] Z)) → Tm (X |[ θ′ , μ ∨ ν ] Z)
+data SynTerm : SynType → Type where
+  [_] : ∀ {X} → Lex X → SynTerm X
+  App : ∀ {X Y θ μ} ⦃ _ : ∙ ≤ μ ⦄ (f : SynTerm (X |[ θ , μ ] Y)) (x : SynTerm Y) → SynTerm X
+  B⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : SynTerm (X |[ θ , μ ] Y)) (g : SynTerm (Y |[ θ′ , ν ] Z)) → SynTerm (X |[ θ′ , μ ∨ ν ] Z)
 
 infixr 9 _,_
 data String : Set where
@@ -158,16 +158,17 @@ _++[_]_ : String → Direction → String → String
 xs ++[ ▹ ] ys = xs ++ ys
 xs ++[ ◃ ] ys = ys ++ xs
 
-print : ∀ {A} → Tm A → String
+print : ∀ {A} → SynTerm A → String
 print [ x ] = x , []
 print (App {θ = θ} f x) = print f ++[ θ ] print x
 print (B⟨_⟩ {θ = θ} t f g) = print f ++[ θ ] print g
-  
-happy-dog : Tm N
+
+
+happy-dog : SynTerm N
 happy-dog = App [ happy ] [ dog ]
 
-the-happy : Tm (D |[ ▹ , ◇ ] N)
+the-happy : SynTerm (D |[ ▹ , ◇ ] N)
 the-happy = B⟨ ∥ ⟩ [ the ] [ happy ]
 
-the-happy-dog : Tm D
+the-happy-dog : SynTerm D
 the-happy-dog = App the-happy [ dog ]
