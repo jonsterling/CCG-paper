@@ -131,11 +131,6 @@ data Lex : SynType → Type where
   the  : Lex (D |[ ▹ , ◇ ] N)
   happy  : Lex (N |[ ▹ , ◇ ] N)
 
-
-data Either (A B : Type) : Type where
-  left : A → Either A B
-  right : B → Either A B
-
 data Turn (θ : Direction) (μ ν : Modality) : Direction → Type where
   ∥ : ⦃ _ : ◇ ≤ μ ⦄ ⦃ _ : ◇ ≤ ν ⦄ → Turn θ μ ν θ
   ⋏ : ⦃ _ : × ≤ μ ⦄ ⦃ _ : × ≤ ν ⦄ → Turn θ μ ν (! θ)
