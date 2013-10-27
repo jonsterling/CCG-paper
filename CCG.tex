@@ -99,11 +99,12 @@ be reversed:
 A \emph{modality} is one of the set $\ty{Mod}\triangleq\{\con\bullet, \con\diamond,
 \con\times, \con\star\}$, where \con\bullet\ denotes function terms
 which may only be combined using basic function application,
-\con\diamond\ those which may be combined by application and
-composition such that its operands be uniform in direction, and
-\con\times\ those which may be combined by application and composition
-such that its operands may \emph{not} be uniform in direction; this kind
-of composition is called \emph{crossed} composition. Finally, \con\star\
+\con\diamond\ those which may be combined by application and any rules which
+preserve the uniform order of its operands (this kind of
+rule is called \emph{harmonic}), and
+\con\times\ those which may be combined by application and any rules
+which permute the order of its operands (this kind of rule is called
+\emph{crossed}). Finally, \con\star\
 represents those terms which may be combined using any of the combining
 rules.
 
@@ -206,7 +207,7 @@ rules.
   Lemma~\ref{lem:modality-bounding}, they are a bounded lattice.
 \end{proofof}
 
-\begin{corollary}
+\begin{corollary}\label{cor:modality-porder}
   We have a partial order $\leq$ on modalities as follows:
   \[
     \arraycolsep=1.4pt
@@ -300,12 +301,31 @@ and a lexicon~$L$:
 \end{equation}
 
 As you can see, we were able to express the two directional variants of
-$\mathbf{App}$ in one rule by abstracting over $\theta$. The composition
-rule is more interesting, as it places further constraints on both the
-directions and the modalities in order to generate in one stroke four
-different rules: forward composition, backward composition, forward crossed
-composition, and backward crossed composition. We can capture these
-constraints with a notion of \ty{Turn}.
+$\mathbf{App}$ in one rule by abstracting over $\theta$. We could of
+course omit the constraint $p$, since by
+Lemma~\ref{lem:modality-bounding} and
+Corollary~\ref{cor:modality-porder} we have $\con\bullet\leq\mu$ for all
+modalities $\mu$.
+
+Naturally, type-raising can also be expressed very simply using our
+direction reversal operator:
+
+\begin{equation}
+  \infer{\uparrow^\theta_\mu x \syn: \arrty Y|[\theta,\mu](\arrty Y|[!\,\theta, \mu] X)}
+  {
+    X, Y : \ty{SynType}_B &
+    \theta : \ty{Dir} &
+    \mu : \ty{Mod} &
+    x \syn: X
+  }\tag{$\mathbf{TR}$}
+\end{equation}
+
+The composition rule is more interesting, as it places further
+constraints on both the directions and the modalities in order to
+generate in one stroke four different rules: forward composition,
+backward composition, forward crossed composition, and backward crossed
+composition. We can capture these constraints with a notion of
+\ty{Turn}.
 
 \begin{definition}
   A \emph{turn} is an operation on directions licensed by
@@ -341,8 +361,9 @@ constraints with a notion of \ty{Turn}.
   \]
 \end{definition}
 
-With this in hand, the rule for composition may be expressed in one
-shot:
+With this in hand, the rules for composition may be expressed each in
+one shot, accounting for harmonic and crossed variants in either
+direction:
 
 \begin{equation}
   \infer{f \mathbin{\bf B}_t^\theta g \syn: \arrty X|[\rho,\mu\lor\nu]Z}
@@ -356,7 +377,23 @@ shot:
   }\tag{$\mathbf{Comp}$}
 \end{equation}
 
-\subsection{Correspondence to Syntactic Proofs}
+It turns out that \ty{Turn} also suffices to give a single rule schema
+for substitution (a form of combination in which an argument is used
+twice):
+
+\begin{equation}
+  \infer{f \mathbin{\bf S}_t^\theta g \syn: \arrty X|[\rho,\mu\lor\nu]Z}
+  {
+    X, Y, Z : \ty{SynType}_B &
+    \theta,\rho : \ty{Dir} &
+    \mu,\nu : \ty{Mod} &
+    t : \ty{Turn}\,\theta\,\mu\,\nu\,\rho &
+    f \syn: \arrty {(\arrty X|[\theta,\mu]Y)} |[ \rho,\nu] Z &
+    g \syn: \arrty Y|[\rho,\nu]Z
+  }\tag{$\mathbf{Subst}$}
+\end{equation}
+
+\subsection{Correspondence to Visual Proofs}
 
 A syntactic proof in traditional CCG is laid out visually as a trace of
 the judgements which lead to a particular string being considered
