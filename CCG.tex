@@ -45,7 +45,8 @@
 
 \begin{abstract}
   A compact formal presentation of the type theory and calculus behind
-  the Combinatory Categorial Grammar. Traditional presentations of the
+  the Combinatory Categorial Grammar, in its fully lexicalized
+  multi-modal extension. Traditional presentations of the
   combining rules tend to involve duplication of a single rule over both
   direction and modality in an effort to make derivations look as much
   as possible like the surface forms they trace. Here, we take a
@@ -62,8 +63,6 @@
 \def\ident#1{\ensuremath{\operatorname{\mathsf{#1}}}}
 \def\induction#1{\mathkw{induction}\ #1}
 \def\decide#1{\mathkw{decide}\ #1}
-
-
 
 \section{The Syntax}
 
@@ -356,6 +355,45 @@ shot:
     g \syn: \arrty Y|[\rho,\nu] Z
   }\tag{$\mathbf{Comp}$}
 \end{equation}
+
+\subsection{Correspondence to Syntactic Proofs}
+
+A syntactic proof in traditional CCG is laid out visually as a trace of
+the judgements which lead to a particular string being considered
+admissible. It may seem that because we have abstracted direction out of
+the judgements, we will no longer be able to construct such proofs, but
+this is not so. The fact that the order of (meta)-parameters of
+judgements no longer corresponds to the order of elements in a string is
+inconsequential: we can choose to have our notation vary with the choice
+of directional parameters (such as $\theta:\ty{Dir}$). Therefore,
+whereas the typing derivation of ``The dog ate the shoe'' is the
+following (with proof obligations left implicit):
+
+\[
+  (\text{ate} \cdot^\triangleright_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
+\text{shoe})) \cdot^\triangleleft_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
+\text{dog})
+\]
+But it is trivial to convert this derivation into the traditional sort:
+\[
+  \dfrac{
+    \dfrac{
+      \dfrac{\text{the}}{\rarrty D|[\con\diamond]N}
+      \quad
+      \dfrac{\text{dog}}{N}
+    }{D}\triangleright
+    \quad
+    \dfrac{
+      \dfrac{\text{ate}}{\rarrty {(\larrty S|[\con\bullet]D)}|[\con\bullet]D}
+      \quad
+      \dfrac{
+        \dfrac{\text{the}}{\rarrty D|[\con\diamond]N}
+        \quad
+        \dfrac{\text{shoe}}{N}
+      }{D}\triangleright
+    }{\larrty S|[\con\bullet]D}\triangleright
+  }{S}\triangleleft
+\]
 
 
 \newpage

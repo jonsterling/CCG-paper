@@ -128,8 +128,10 @@ data SynType : Type where
 
 data Lex : SynType → Type where
   dog  : Lex N
+  shoe : Lex N
   the  : Lex (D |[ ▹ , ◇ ] N)
   happy  : Lex (N |[ ▹ , ◇ ] N)
+  ate : Lex ((V |[ ◃ , ∙ ] D) |[ ▹ , ∙ ] D)
 
 data Turn (θ : Direction) (μ ν : Modality) : Direction → Type where
   ∥ : ⦃ _ : ◇ ≤ μ ⦄ ⦃ _ : ◇ ≤ ν ⦄ → Turn θ μ ν θ
@@ -158,6 +160,8 @@ print [ x ] = x , []
 print (App {θ = θ} f x) = print f ++[ θ ] print x
 print (B⟨_⟩ {θ = θ} t f g) = print f ++[ θ ] print g
 
+the-dog-ate-the-shoe : SynTerm V
+the-dog-ate-the-shoe = App (App [ ate ] (App [ the ] [ shoe ])) (App [ the ] [ dog ])
 
 happy-dog : SynTerm N
 happy-dog = App [ happy ] [ dog ]
