@@ -393,24 +393,16 @@ twice):
   }\tag{$\mathbf{Subst}$}
 \end{equation}
 
-\subsection{Correspondence to Visual Proofs}
+\subsection{Elaboration and Decidability of Type Checking}
 
-A syntactic proof in traditional CCG is laid out visually as a trace of
-the judgements which lead to a particular string being considered
-admissible. It may seem that because we have abstracted direction out of
-the judgements, we will no longer be able to construct such proofs, but
-this is not so. The fact that the order of (meta)-parameters of
-judgements no longer corresponds to the order of elements in a string is
-inconsequential: we can choose to have our notation vary with the choice
-of directional parameters (such as $\theta:\ty{Dir}$). Therefore, a term
-in our calculus which proves ``The dog ate the shoe'' can be given as
-follows:
+A term in our calculus which represents the syntax of ``The dog ate the
+shoe'' can be given as follows:
 
-\[
+\begin{equation}\label{eq:dog-ate-shoe}
   (\text{ate} \cdot^\triangleright_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
 \text{shoe})) \cdot^\triangleleft_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
 \text{dog})
-\]
+\end{equation}
 
 We can either consider such a notation as having elided the proofs which
 satisfy the constraints of the rules, or as generating proof obligations
@@ -420,9 +412,32 @@ surface-level representation which is elaborated into a fully explicit
 one; in this case, this would mean mechanically adding proofs that
 $\con\bullet\leq\con\diamond$ and $\con\bullet\leq\con\bullet$ hold.
 
-It is trivial to convert our term into a derivation of the traditional
-sort though:
-\[
+\begin{theorem}\label{thm:decidable-ccg}
+  Type checking the CCG is decidable.
+\end{theorem}
+\begin{proof}
+  The typing rules of the CCG that of the STLC, but indexed by
+  constraints on modality and direction. Because \ty{Dir} has decidable
+  equality and \ty{Modality} has a decidable order, type checking is
+  decidable.
+\end{proof}
+
+\subsection{Correspondence to Visual Proofs}
+
+A syntactic proof in traditional CCG is laid out visually as a trace of
+the judgements which lead to a particular string being considered
+admissible. It may seem that because we have abstracted direction out of
+the judgements, we will no longer be able to construct such proofs, but
+this is not so. The fact that the order of (meta)-parameters of
+judgements no longer corresponds to the order of elements in a string is
+inconsequential: we can choose to have our notation vary with the choice
+of directional parameters (such as $\theta:\ty{Dir}$).
+
+It is trivial to convert the term in (\ref{eq:dog-ate-shoe}) into a
+derivation of the traditional sort by simply making the order of
+elements differ according to the directionality of the combining
+operator:
+\begin{equation}
   \dfrac{
     \dfrac{
       \dfrac{\text{the}}{\rarrty D|[\con\diamond]N}
@@ -440,6 +455,8 @@ sort though:
       }{D}\triangleright
     }{\larrty S|[\con\bullet]D}\triangleright
   }{S}\triangleleft
-\]
+\end{equation}
+This is a purely visual conceit: it makes no difference whether we
+introduce direction symbolically or spatially.
 
 \end{document}
