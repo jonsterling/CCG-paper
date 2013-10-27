@@ -142,7 +142,7 @@ data SynTerm : SynType → Type where
   App : ∀ {X Y θ μ} ⦃ _ : ∙ ≤ μ ⦄ (f : SynTerm (X |[ θ , μ ] Y)) (x : SynTerm Y) → SynTerm X
   B⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : SynTerm (X |[ θ , μ ] Y)) (g : SynTerm (Y |[ θ′ , ν ] Z)) → SynTerm (X |[ θ′ , μ ∨ ν ] Z)
   S⟨_⟩ : ∀ {X Y Z θ θ′ μ ν} (_ : Turn θ μ ν θ′) (f : SynTerm ((X |[ θ , μ ] Y) |[ θ′ , ν ] Z)) (g : SynTerm (Y |[ θ′ , ν ] Z)) → SynTerm (X |[ θ′ , μ ∨ ν ] Z)
-  T : ∀ {X Y θ μ} (x : SynTerm Y) → SynTerm (Y |[ θ , μ ] (Y |[ ! θ , μ ] X))
+  ↑_ : ∀ {X Y θ μ} (x : SynTerm Y) → SynTerm (Y |[ θ , μ ] (Y |[ ! θ , μ ] X))
 
 infixr 9 _,_
 data String : Set where
@@ -161,7 +161,8 @@ print : ∀ {A} → SynTerm A → String
 print [ x ] = x , []
 print (App {θ = θ} f x) = print f ++[ θ ] print x
 print (B⟨_⟩ {θ = θ} t f g) = print f ++[ θ ] print g
-print _ = {!!}
+print (S⟨_⟩ {θ = θ} t f g) = print f ++[ θ ] print g
+print (↑ x) = print x
 
 the-dog-ate-the-shoe : SynTerm V
 the-dog-ate-the-shoe = App (App [ ate ] (App [ the ] [ shoe ])) (App [ the ] [ dog ])
@@ -174,3 +175,4 @@ the-happy = B⟨ ∥ ⟩ [ the ] [ happy ]
 
 the-happy-dog : SynTerm D
 the-happy-dog = App the-happy [ dog ]
+
