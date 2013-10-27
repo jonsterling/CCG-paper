@@ -402,16 +402,26 @@ the judgements, we will no longer be able to construct such proofs, but
 this is not so. The fact that the order of (meta)-parameters of
 judgements no longer corresponds to the order of elements in a string is
 inconsequential: we can choose to have our notation vary with the choice
-of directional parameters (such as $\theta:\ty{Dir}$). Therefore,
-whereas the typing derivation of ``The dog ate the shoe'' is the
-following (with proof obligations left implicit):
+of directional parameters (such as $\theta:\ty{Dir}$). Therefore, a term
+in our calculus which proves ``The dog ate the shoe'' can be given as
+follows:
 
 \[
   (\text{ate} \cdot^\triangleright_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
 \text{shoe})) \cdot^\triangleleft_{\con\bullet} (\text{the} \cdot^\triangleright_{\con\diamond}
 \text{dog})
 \]
-But it is trivial to convert this derivation into the traditional sort:
+
+We can either consider such a notation as having elided the proofs which
+satisfy the constraints of the rules, or as generating proof obligations
+which must be satisfied in order to construct a typing derivation. In
+the latter case, we can then consider this notation to be a
+surface-level representation which is elaborated into a fully explicit
+one; in this case, this would mean mechanically adding proofs that
+$\con\bullet\leq\con\diamond$ and $\con\bullet\leq\con\bullet$ hold.
+
+It is trivial to convert our term into a derivation of the traditional
+sort though:
 \[
   \dfrac{
     \dfrac{
