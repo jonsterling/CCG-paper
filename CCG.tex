@@ -432,46 +432,4 @@ But it is trivial to convert this derivation into the traditional sort:
   }{S}\triangleleft
 \]
 
-
-\newpage
-\appendix
-\section{Logical Kit}
-
-\begin{definition}
-  For a proposition $P$, $\ty{Decision}\ P$ is the type of proofs or
-  disproofs of $P$.
-  \[
-    \infer{\ty{Decision}\, P : \ty{Type}}
-    {
-      P : \ty{Prop}
-    }
-  \]
-  \[
-    \infer{\con{yes}\ p : \ty{Decision}\, P}
-    {
-      P : \ty{Prop} &
-      p : P
-    }
-    \qquad
-    \infer{\con{no}\ np : \ty{Decision}\, P}
-    {
-      P : \ty{Prop} &
-      np : P\to\ty\bot
-    }
-  \]
-\end{definition}
-
-\begin{definition}
-  We consider a relation $R$ on $C$ decidable if for all $x,y$ in
-  $C$, $\ty{Decision}\ x\,R\,y$.
-  \[
-    \infer{\ty{Decidable}\ R \mapsto \prod_{x:C}\prod_{y:C} \ty{Decision}\ x\,R\,y : \ty{Type}}
-    {
-      C : \ty{Type} &
-      R : C\to C\to\ty{Prop}
-    }
-  \]
-
-\end{definition}
-
 \end{document}
